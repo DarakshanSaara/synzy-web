@@ -208,13 +208,13 @@ const HomePage = ({ onCompareToggle, comparisonList, shortlist, onShortlistToggl
     <div className="min-h-screen bg-gray-50 relative">
       {/* Back Button - Fixed positioning to ensure visibility */}
       <button
-        onClick={() => navigate(-1)}
-        className="fixed top-4 left-4 z-50 flex items-center gap-2 bg-white text-gray-700 px-4 py-2 rounded-lg shadow-lg hover:bg-gray-50 transition-all duration-200 font-medium border border-gray-200"
-        aria-label="Go back"
-      >
-        <ArrowLeft size={20} />
-        <span>Back</span>
-      </button>
+  onClick={() => navigate(-1)}
+  className="fixed top-22 left-4 z-50 flex items-center gap-2 bg-white text-gray-700 px-4 py-2 rounded-lg shadow-lg hover:bg-gray-50 transition-all duration-200 font-medium border border-gray-200"
+  aria-label="Go back"
+>
+  <ArrowLeft size={20} />
+  <span>Back</span>
+</button>
 
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20">

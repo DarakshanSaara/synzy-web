@@ -12,7 +12,8 @@ import {
   Filter,
   Heart,
   GitCompare,
-  Eye
+  Eye,
+  ArrowLeft  // Added ArrowLeft here
 } from 'lucide-react';
 import { searchcolleges } from '../api/searchService';
 import { getUserPreferences } from '../api/preferencesService';
@@ -204,12 +205,22 @@ const HomePage = ({ onCompareToggle, comparisonList, shortlist, onShortlistToggl
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 relative">
+      {/* Back Button */}
+      <button
+        onClick={() => navigate(-1)}
+        className="fixed top-22 left-4 z-50 flex items-center gap-2 bg-white text-gray-700 px-4 py-2 rounded-lg shadow-lg hover:bg-gray-50 transition-all duration-200 font-medium border border-gray-200"
+        aria-label="Go back"
+      >
+        <ArrowLeft size={20} />
+        <span>Back</span>
+      </button>
+
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20">
         <div className="container mx-auto px-6 text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            {currentUser ? `Welcome back, ${currentUser.email?.split('@')[0] || 'User'}!` : 'Find Your Perfect college'}
+            {currentUser ? `Welcome back, ${currentUser.email?.split('@')[0] || 'User'}!` : 'Find Your Perfect College'}
           </h1>
           <p className="text-xl md:text-2xl text-blue-100 mb-8 max-w-3xl mx-auto">
             {currentUser 
