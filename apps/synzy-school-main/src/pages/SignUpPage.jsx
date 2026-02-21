@@ -3,14 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft } from "lucide-react"; // Added ArrowLeft here
 import { toast } from "react-toastify";
 import { GoogleLogin } from '@react-oauth/google';
 import { googleLogin } from '../api/authService';
 import { useAuth } from "../context/AuthContext";
-
-
-
 import { registerUser } from "../api/authService";
 
 const signUpSchema = z.object({
@@ -24,7 +21,7 @@ const signUpSchema = z.object({
 const SignUpPage = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
-   const { setAuthSession } = useAuth();
+  const { setAuthSession } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -40,100 +37,94 @@ const SignUpPage = () => {
   // EMAIL SIGNUP (SCHOOL)
   // =====================
   const onSubmit = async (data) => {
-  setIsLoading(true);
-  try {
-    const payload = {
-      name: data.name,
-      email: data.email,
-      password: data.password,
-      userType: "school", 
-      authProvider: "email",
-    };
+    setIsLoading(true);
+    try {
+      const payload = {
+        name: data.name,
+        email: data.email,
+        password: data.password,
+        userType: "school", 
+        authProvider: "email",
+      };
 
-    // 1. Capture the response from the server
-    const res = await registerUser(payload);
+      const res = await registerUser(payload);
 
-    // 2. Check if the backend returned success and data
-    if (res.data.status === "success") {
-      const { token, user } = res.data.data;
+      if (res.data.status === "success") {
+        const { token, user } = res.data.data;
 
-      // 3. ✅ CRITICAL: Update AuthContext state
-      // This tells the app "The user is now a logged-in School"
-    
+        setAuthSession(user, token);
 
-setAuthSession(user, token);
-
-      toast.success("School account created successfully!");
-      
-      // 4. Navigate now that permissions are set in state
-      navigate("/school-portal/register", { replace: true });
+        toast.success("School account created successfully!");
+        
+        navigate("/school-portal/register", { replace: true });
+      }
+    } catch (error) {
+      console.error("Signup error:", error);
+      toast.error(
+        error.response?.data?.message || "Registration failed. Please try again."
+      );
+    } finally {
+      setIsLoading(false);
     }
-  } catch (error) {
-    console.error("Signup error:", error);
-    toast.error(
-      error.response?.data?.message || "Registration failed. Please try again."
-    );
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
   // =====================
   // GOOGLE SIGNUP (SCHOOL)
   // =====================
- // 1. Make sure you have this at the top of your SignUpPage component:
-// const { login } = useAuth();
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      const tokenId = credentialResponse.credential;
 
-const handleGoogleSuccess = async (credentialResponse) => {
-  try {
-    const tokenId = credentialResponse.credential;
-
-    if (!tokenId) {
-      toast.error('Google token missing');
-      return;
-    }
-
-    const payload = {
-      tokenId,
-      authProvider: 'google',
-      userType: 'school',
-    };
-
-    const res = await googleLogin(payload);
-
-    // Verify backend response status
-    if (res.data.status === "success") {
-      // Destructure from res.data.data based on your JSON logs
-      const { token, auth } = res.data.data; 
-
-      if (token && auth) {
-        // ✅ CRITICAL CHANGE: Use login() from AuthContext
-        // This updates the 'currentUser' state in App.jsx immediately
-        setAuthSession(auth, token); 
-        
-        toast.success('Google signup successful!');
-        
-        // ✅ Navigate once state is updated
-        // Note: replace: true prevents users from hitting 'back' to go to signup
-        navigate('/school-portal/register', { replace: true });
-      } else {
-        throw new Error("Missing token or user data from server");
+      if (!tokenId) {
+        toast.error('Google token missing');
+        return;
       }
+
+      const payload = {
+        tokenId,
+        authProvider: 'google',
+        userType: 'school',
+      };
+
+      const res = await googleLogin(payload);
+
+      if (res.data.status === "success") {
+        const { token, auth } = res.data.data; 
+
+        if (token && auth) {
+          setAuthSession(auth, token); 
+          
+          toast.success('Google signup successful!');
+          
+          navigate('/school-portal/register', { replace: true });
+        } else {
+          throw new Error("Missing token or user data from server");
+        }
+      }
+    } catch (error) {
+      console.error('Google signup error:', error);
+      toast.error(
+        error.response?.data?.message || 'Google signup failed. Please try again.'
+      );
     }
-  } catch (error) {
-    console.error('Google signup error:', error);
-    toast.error(
-      error.response?.data?.message || 'Google signup failed. Please try again.'
-    );
-  }
-};
+  };
 
   const handleGoogleError = () => {
     toast.error("Google sign-up was cancelled");
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4 relative">
+      {/* Back Button */}
+      <button
+        onClick={() => navigate(-1)}
+        className="fixed top-4 left-4 z-50 flex items-center gap-2 bg-white text-gray-700 px-4 py-2 rounded-lg shadow-lg hover:bg-gray-50 transition-all duration-200 font-medium border border-gray-200"
+        aria-label="Go back"
+      >
+        <ArrowLeft size={20} />
+        <span>Back</span>
+      </button>
+
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-lg">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-900">
@@ -206,10 +197,16 @@ const handleGoogleSuccess = async (credentialResponse) => {
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute inset-y-0 right-0 px-3 text-gray-500"
+                disabled={isLoading}
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
+            {errors.password && (
+              <p className="mt-1 text-xs text-red-500">
+                {errors.password.message}
+              </p>
+            )}
           </div>
 
           {/* REGISTER */}
@@ -231,13 +228,12 @@ const handleGoogleSuccess = async (credentialResponse) => {
 
         {/* GOOGLE SIGNUP */}
         <div className="flex justify-center">
-  <GoogleLogin
-    onSuccess={handleGoogleSuccess}
-    onError={handleGoogleError}
-    width="300"
-  />
-</div>
-
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={handleGoogleError}
+            width="300"
+          />
+        </div>
 
         {/* SIGN IN LINK */}
         <p className="text-sm text-center text-gray-600">

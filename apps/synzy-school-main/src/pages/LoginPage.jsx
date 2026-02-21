@@ -3,11 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft } from "lucide-react"; // Added ArrowLeft here
 import { toast } from "react-toastify";
 import { useAuth } from "../context/AuthContext";
-import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google'; // Added this
-import { googleLogin } from '../api/authService'; // Added this
+import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
+import { googleLogin } from '../api/authService';
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -49,44 +49,38 @@ const LoginPage = () => {
   // =====================
   // EMAIL LOGIN
   // =====================
- // Inside LoginPage.jsx
+  const onSubmit = async (data) => {
+    setIsLoading(true);
+    setServerError("");
+    try {
+      const user = await login(data);
 
-const onSubmit = async (data) => {
-  setIsLoading(true);
-  setServerError("");
-  try {
-    // 1. Capture the user object returned by your login function
-    // Assuming your AuthContext login returns the user data
-    const user = await login(data); 
+      if (rememberMe) {
+        localStorage.setItem("school-finder-rememberMe", JSON.stringify(data));
+      } else {
+        localStorage.removeItem("school-finder-rememberMe");
+      }
 
-    if (rememberMe) {
-      localStorage.setItem("school-finder-rememberMe", JSON.stringify(data));
-    } else {
-      localStorage.removeItem("school-finder-rememberMe");
+      if (user?.userType === 'school') {
+        navigate("/school-portal/register");
+      } else {
+        navigate("/dashboard");
+      }
+
+    } catch (error) {
+      console.error("Login failed:", error);
+      if (error.response?.status === 401) {
+        setServerError(error.response?.data?.message || "Please verify your email.");
+        setShowResendButton(true);
+        setUserEmail(data.email);
+        toast.info("Please check your email inbox for verification link.");
+      } else {
+        setServerError(error.response?.data?.message || "Invalid email or password.");
+      }
+    } finally {
+      setIsLoading(false);
     }
-
-    // 2. ✅ DYNAMIC REDIRECTION
-    // Check if the logged-in user is a school or a student
-    if (user?.userType === 'school') {
-      navigate("/school-portal/register"); // Or wherever your school home is
-    } else {
-      navigate("/dashboard"); // Standard student dashboard
-    }
-
-  } catch (error) {
-    console.error("Login failed:", error);
-    if (error.response?.status === 401) {
-      setServerError(error.response?.data?.message || "Please verify your email.");
-      setShowResendButton(true);
-      setUserEmail(data.email);
-      toast.info("Please check your email inbox for verification link.");
-    } else {
-      setServerError(error.response?.data?.message || "Invalid email or password.");
-    }
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
   // =====================
   // GOOGLE LOGIN HANDLERS
@@ -97,9 +91,7 @@ const onSubmit = async (data) => {
       const payload = {
         tokenId: credentialResponse.credential,
         authProvider: 'google',
-        // Note: For login, the backend usually ignores this if user exists,
-        // or uses it to create a default 'student' profile if new.
-        userType: 'student', 
+        userType: 'student',
       };
 
       const res = await googleLogin(payload);
@@ -107,13 +99,10 @@ const onSubmit = async (data) => {
       if (res.data.status === "success") {
         const { token, auth } = res.data.data;
 
-        // Use AuthContext to set state and localStorage
-        await login(auth, token); 
+        await login(auth, token);
 
         toast.success('Logged in successfully!');
 
-        // REDIRECTION LOGIC:
-        // If it's a school user, send to portal. Otherwise, send to dashboard.
         if (auth.userType === 'school') {
           navigate('/school-portal/register');
         } else {
@@ -134,7 +123,17 @@ const onSubmit = async (data) => {
 
   return (
     <GoogleOAuthProvider clientId={clientId}>
-      <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
+      <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4 relative">
+        {/* Back Button */}
+        <button
+          onClick={() => navigate(-1)}
+          className="fixed top-4 left-4 z-50 flex items-center gap-2 bg-white text-gray-700 px-4 py-2 rounded-lg shadow-lg hover:bg-gray-50 transition-all duration-200 font-medium border border-gray-200"
+          aria-label="Go back"
+        >
+          <ArrowLeft size={20} />
+          <span>Back</span>
+        </button>
+
         <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-lg">
           <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-900">Welcome back</h2>
@@ -142,10 +141,22 @@ const onSubmit = async (data) => {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* ... (Server Error Display) */}
+            {/* Server Error Display */}
             {serverError && (
                <div className="text-sm text-red-600 bg-red-100 p-3 rounded-md text-center">
                  <p>{serverError}</p>
+                 {showResendButton && (
+                   <button
+                     type="button"
+                     onClick={() => {
+                       // Add resend verification logic here
+                       toast.info(`Verification email resent to ${userEmail}`);
+                     }}
+                     className="mt-2 text-blue-600 hover:underline"
+                   >
+                     Resend verification email
+                   </button>
+                 )}
                </div>
             )}
 
@@ -159,6 +170,9 @@ const onSubmit = async (data) => {
                   className={`w-full px-3 py-2 mt-1 border rounded-md ${errors.email ? "border-red-500" : "border-gray-300"}`}
                   disabled={isLoading}
                 />
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+                )}
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-700">Password</label>
@@ -169,22 +183,40 @@ const onSubmit = async (data) => {
                     className={`w-full px-3 py-2 mt-1 border rounded-md ${errors.password ? "border-red-500" : "border-gray-300"}`}
                     disabled={isLoading}
                   />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 px-3 text-gray-500">
+                  <button 
+                    type="button" 
+                    onClick={() => setShowPassword(!showPassword)} 
+                    className="absolute inset-y-0 right-0 px-3 text-gray-500"
+                    disabled={isLoading}
+                  >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
                 </div>
+                {errors.password && (
+                  <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+                )}
               </div>
             </div>
 
             <div className="flex items-center justify-between">
               <label className="flex items-center text-sm">
-                <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} className="h-4 w-4 text-blue-600 border-gray-300 rounded" />
+                <input 
+                  type="checkbox" 
+                  checked={rememberMe} 
+                  onChange={(e) => setRememberMe(e.target.checked)} 
+                  className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                  disabled={isLoading}
+                />
                 <span className="ml-2 text-gray-700">Remember Me</span>
               </label>
-              <Link to="/forgot-password" name="forgot" className="text-sm text-blue-600 hover:underline">Forgot password?</Link>
+              <Link to="/forgot-password" className="text-sm text-blue-600 hover:underline">Forgot password?</Link>
             </div>
 
-            <button type="submit" disabled={isLoading} className="w-full px-4 py-2 font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50">
+            <button 
+              type="submit" 
+              disabled={isLoading} 
+              className="w-full px-4 py-2 font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
+            >
               {isLoading ? "Signing In..." : "Sign In"}
             </button>
           </form>
