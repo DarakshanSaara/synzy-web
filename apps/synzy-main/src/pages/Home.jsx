@@ -23,7 +23,7 @@ import {
   ArrowRightCircle,
   ArrowLeftCircle,
   Instagram,
-  Linkedin
+  Linkedin,
 } from 'lucide-react';
 import logo from '../assets/logo.png';
 
@@ -73,64 +73,65 @@ const SynzyHome = () => {
   };
 
   const cards = [
-    { 
-      icon: <Brain className="w-10 h-10 text-purple-600" />, 
-      title: "AI-Powered Matching", 
-      desc: "Our advanced AI algorithms analyze preferences, performance, and requirements to create perfect matches between students and institutions.",
-      color: "purple"
-    },
-    { 
-      icon: <Rocket className="w-10 h-10 text-blue-600" />, 
-      title: "Smart Discovery", 
-      desc: "Intelligent search and filtering system that helps students discover schools and colleges based on their unique needs and aspirations.",
-      color: "blue"
-    },
-    { 
-      icon: <Target className="w-10 h-10 text-red-600" />, 
-      title: "Precision Targeting", 
-      desc: "Help your institution reach the right students with data-driven insights and targeted outreach capabilities.",
-      color: "red"
-    },
-    { 
-      icon: <TrendingUp className="w-10 h-10 text-green-600" />, 
-      title: "Analytics Dashboard", 
-      desc: "Comprehensive analytics and insights to track engagement, applications, and optimize your institution's profile.",
-      color: "green"
-    },
-    { 
-      icon: <MapPin className="w-10 h-10 text-orange-600" />, 
-      title: "Pan-India Reach", 
-      desc: "Connect with students and institutions across India on a single unified platform, expanding your reach exponentially.",
-      color: "orange"
-    },
-    { 
-      icon: <Award className="w-10 h-10 text-indigo-600" />, 
-      title: "Verified Profiles", 
-      desc: "All institutions undergo thorough verification ensuring authentic and trustworthy connections for students and parents.",
-      color: "indigo"
-    }
-  ];
+  { 
+    icon: <Brain className="w-10 h-10 text-purple-600" />, 
+    title: "AI-Powered Matching", 
+    desc: "Our advanced AI algorithms analyze preferences, performance, and requirements to create perfect matches between students and institutions.",
+    color: "purple"
+  },
+  { 
+    icon: <Rocket className="w-10 h-10 text-blue-600" />, 
+    title: "Smart Discovery", 
+    desc: "Intelligent search and filtering system that helps students discover schools and colleges based on their unique needs and aspirations.",
+    color: "blue"
+  },
+  { 
+    icon: <Target className="w-10 h-10 text-red-600" />, 
+    title: "Precision Targeting", 
+    desc: "Help your institution reach the right students with data-driven insights and targeted outreach capabilities.",
+    color: "red"
+  },
+  { 
+    icon: <BarChart3 className="w-10 h-10 text-green-600" />, 
+    title: "Analytics Dashboard", 
+    desc: "Comprehensive analytics and insights to track engagement, applications, and optimize your institution's profile.",
+    color: "green"
+  },
+  { 
+    icon: <Globe2 className="w-10 h-10 text-orange-600" />, 
+    title: "Pan-India Reach", 
+    desc: "Connect with students and institutions across India on a single unified platform, expanding your reach exponentially.",
+    color: "orange"
+  },
+  { 
+    icon: <Shield className="w-10 h-10 text-indigo-600" />, 
+    title: "Verified Profiles", 
+    desc: "All institutions undergo thorough verification ensuring authentic and trustworthy connections for students and parents.",
+    color: "indigo"
+  }
+];
 
-  const steps = [
-    {
-      icon: <Building2 className="w-16 h-16 text-blue-600" />,
-      step: "STEP 1",
-      title: "Register Your Institution",
-      desc: "Create your school or college profile with detailed information about programs, facilities, achievements, and admission criteria."
-    },
-    {
-      icon: <Sparkles className="w-16 h-16 text-purple-600" />,
-      step: "STEP 2",
-      title: "AI Does the Magic",
-      desc: "Our AI analyzes your profile and matches it with students based on their preferences, academic records, and career goals."
-    },
-    {
-      icon: <Rocket className="w-16 h-16 text-green-600" />,
-      step: "STEP 3",
-      title: "Connect & Grow",
-      desc: "Receive qualified leads, manage applications, and grow your institution with the right students who are the perfect fit."
-    }
-  ];
+  // Option 2 - Different icon choices
+const steps = [
+  {
+    icon: <School className="w-16 h-16 text-blue-600" />, // School icon for registration
+    step: "STEP 1",
+    title: "Register Your Institution",
+    desc: "Create your school or college profile with detailed information about programs, facilities, achievements, and admission criteria."
+  },
+  {
+    icon: <Brain className="w-16 h-16 text-purple-600" />, // Brain for AI processing
+    step: "STEP 2",
+    title: "AI Does the Magic",
+    desc: "Our AI analyzes your profile and matches it with students based on their preferences, academic records, and career goals."
+  },
+  {
+    icon: <TrendingUp className="w-16 h-16 text-green-600" />, // TrendingUp for growth
+    step: "STEP 3",
+    title: "Connect & Grow",
+    desc: "Receive qualified leads, manage applications, and grow your institution with the right students who are the perfect fit."
+  }
+];
 
   const [hoveredCard, setHoveredCard] = useState(null);
 
@@ -198,25 +199,69 @@ const SynzyHome = () => {
             </a>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
-            <div>
-              <div className="text-3xl font-bold text-gray-900">500+</div>
-              <div className="text-gray-600">Registered Schools</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-gray-900">300+</div>
-              <div className="text-gray-600">Registered Colleges</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-gray-900">50K+</div>
-              <div className="text-gray-600">Student Matches</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-gray-900">95%</div>
-              <div className="text-gray-600">Satisfaction Rate</div>
-            </div>
-          </div>
+          {/* Platform Highlights */}
+<div className="w-full py-16">
+  <div className="max-w-4xl mx-auto px-6">
+    <h2 className="text-4xl md:text-5xl font-bold text-center mb-12 text-gray-900">
+      Platform Highlights
+    </h2>
+    <div className="space-y-4">
+      
+      {/* Students - Blue */}
+      <div className="flex items-start gap-5 p-6 bg-gradient-to-r from-blue-50 to-transparent rounded-2xl border-l-8 border-blue-400 shadow-sm">
+        <div className="flex-shrink-0 w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center shadow-inner">
+          <Users className="w-7 h-7 text-blue-600" />
+        </div>
+        <div className="flex-1">
+          <p className="font-extrabold text-blue-800 text-xl mb-2 tracking-tight">Students</p>
+          <p className="text-gray-700 text-base leading-relaxed">
+            Discover the right school or college and apply with ease.
+          </p>
+        </div>
+      </div>
+
+      {/* Schools - Green */}
+      <div className="flex items-start gap-5 p-6 bg-gradient-to-r from-green-50 to-transparent rounded-2xl border-l-8 border-green-400 shadow-sm">
+        <div className="flex-shrink-0 w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center shadow-inner">
+          <School className="w-7 h-7 text-green-600" />
+        </div>
+        <div className="flex-1">
+          <p className="font-extrabold text-green-800 text-xl mb-2 tracking-tight">Schools</p>
+          <p className="text-gray-700 text-base leading-relaxed">
+            Connect with interested students and manage admissions efficiently.
+          </p>
+        </div>
+      </div>
+
+      {/* Colleges - Purple */}
+      <div className="flex items-start gap-5 p-6 bg-gradient-to-r from-purple-50 to-transparent rounded-2xl border-l-8 border-purple-400 shadow-sm">
+        <div className="flex-shrink-0 w-14 h-14 bg-purple-100 rounded-2xl flex items-center justify-center shadow-inner">
+          <GraduationCap className="w-7 h-7 text-purple-600" />
+        </div>
+        <div className="flex-1">
+          <p className="font-extrabold text-purple-800 text-xl mb-2 tracking-tight">Colleges</p>
+          <p className="text-gray-700 text-base leading-relaxed">
+            Showcase programs, receive applications, and streamline admissions.
+          </p>
+        </div>
+      </div>
+
+      {/* AI Matching - Teal */}
+      <div className="flex items-start gap-5 p-6 bg-gradient-to-r from-teal-50 to-transparent rounded-2xl border-l-8 border-teal-400 shadow-sm">
+        <div className="flex-shrink-0 w-14 h-14 bg-teal-100 rounded-2xl flex items-center justify-center shadow-inner">
+          <Brain className="w-7 h-7 text-teal-600" />
+        </div>
+        <div className="flex-1">
+          <p className="font-extrabold text-teal-800 text-xl mb-2 tracking-tight">AI Matching</p>
+          <p className="text-gray-700 text-base leading-relaxed">
+            Smart recommendations connecting students with the right institutions.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
         </section>
 
         {/* AI Technology Section */}

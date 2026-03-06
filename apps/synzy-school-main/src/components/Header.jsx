@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { School, Menu, X, LogOut, User, ChevronDown, Shield } from 'lucide-react';
+import { School, Menu, X, LogOut, User, ChevronDown, Shield, ArrowLeft } from 'lucide-react';
 import NotificationIcon from './NotificationIcon';
 // import Logo from './Logo';
 import logo from '../assets/logo.png';
@@ -32,59 +32,74 @@ const Header = ({ isMobileMenuOpen, setMobileMenuOpen, compareCount, shortlistCo
   return (
   <header className="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
     <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
-      <Logo />
-      <div className="hidden md:flex items-center space-x-8">
-        {(!currentUser || currentUser.userType !== 'school') && (
-            <>
-                <Link to="/schools" className="text-gray-600 hover:text-blue-600">Browse Schools</Link>
-                {currentUser && (
-                  <>
-                    <Link to="/search-schools" className="text-gray-600 hover:text-blue-600">Search Schools</Link>
-                    <Link to="/predictor" className="text-gray-600 hover:text-blue-600">Predict Schools</Link>
-                  </>
-                )}
-                <Link to="/compare" className="text-gray-600 hover:text-blue-600 relative">
-                  Compare
-                  {compareCount > 0 && <span className="absolute -top-2 -right-4 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">{compareCount}</span>}
-                </Link>
-                {/* <Link to="/shortlist" className="text-gray-600 hover:text-blue-600 relative">
-                  Shortlist
-                  {shortlistCount > 0 && <span className="absolute -top-2 -right-6 bg-rose-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">{shortlistCount}</span>}
-                </Link> */}
-                <Link to="/blog" className="text-gray-600 hover:text-blue-600">Blog</Link>
-            </>
-        )}
+  {/* Back Button - Extreme Left */}
+  <button 
+    onClick={() => navigate(-1)}
+    className="flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors absolute left-6"
+    title="Go back"
+  >
+    <ArrowLeft size={18} />
+    <span className="text-sm font-medium">Back</span>
+  </button>
 
-         {currentUser && (currentUser.userType === 'parent' || currentUser.userType === 'student') && (
-            <Link to="/application-status" className="text-gray-600 hover:text-blue-600">Application Status</Link>
-          )}
+  {/* Logo - Moved left with ml-4 */}
+  <div className="flex-1 flex justify-center md:justify-start md:ml-4">
+    <Logo />
+  </div>
+  
+  {/* Navigation - Centered */}
+  <div className="hidden md:flex items-center justify-center flex-1 space-x-8">
+    {(!currentUser || currentUser.userType !== 'school') && (
+        <>
+            <Link to="/schools" className="text-gray-600 hover:text-blue-600">Browse Schools</Link>
+            {currentUser && (
+              <>
+                <Link to="/search-schools" className="text-gray-600 hover:text-blue-600">Search Schools</Link>
+                <Link to="/predictor" className="text-gray-600 hover:text-blue-600">Predict Schools</Link>
+              </>
+            )}
+            <Link to="/compare" className="text-gray-600 hover:text-blue-600 relative">
+              Compare
+              {compareCount > 0 && <span className="absolute -top-2 -right-4 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">{compareCount}</span>}
+            </Link>
+            {/* <Link to="/shortlist" className="text-gray-600 hover:text-blue-600 relative">
+              Shortlist
+              {shortlistCount > 0 && <span className="absolute -top-2 -right-6 bg-rose-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">{shortlistCount}</span>}
+            </Link> */}
+            <Link to="/blog" className="text-gray-600 hover:text-blue-600">Blog</Link>
+        </>
+    )}
 
-      </div>
-      <div className="hidden md:flex items-center space-x-4">
-        {currentUser ? (
-            <>
-                <NotificationIcon />
-                <ProfileDropdown currentUser={currentUser} onLogout={onLogout} />
-            </>
-        ) : (
-            <>{/*<div className="flex items-center gap-2 border-r border-gray-300 pr-4">
-                  <User size={16} className="text-gray-500" />
-                  <Link to="/login" className="text-gray-600 hover:text-blue-600 font-medium">User/Parent Login</Link>
-                </div>*/}
-               
-                <div className="flex items-center gap-2">
-                  <School size={16} className="text-blue-600" />
-                  <Link to="/signup-school" className="text-blue-600 hover:text-blue-700 font-medium">School Login</Link>
-                </div>
-            </>
-        )}
-      </div>
-      <div className="md:hidden">
-        <button onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}>
-          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
-    </nav>
+     {currentUser && (currentUser.userType === 'parent' || currentUser.userType === 'student') && (
+        <Link to="/application-status" className="text-gray-600 hover:text-blue-600">Application Status</Link>
+      )}
+
+  </div>
+  
+  {/* Right Section - Auth/Profile */}
+  <div className="hidden md:flex items-center space-x-4">
+    {currentUser ? (
+        <>
+            <NotificationIcon />
+            <ProfileDropdown currentUser={currentUser} onLogout={onLogout} />
+        </>
+    ) : (
+        <>
+            <div className="flex items-center gap-2">
+              <School size={16} className="text-blue-600" />
+              <Link to="/signup-school" className="text-blue-600 hover:text-blue-700 font-medium">School Login</Link>
+            </div>
+        </>
+    )}
+  </div>
+  
+  {/* Mobile Menu Button */}
+  <div className="md:hidden">
+    <button onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}>
+      {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+    </button>
+  </div>
+</nav>
     {isMobileMenuOpen && (
       <div className="md:hidden bg-white shadow-lg absolute top-full left-0 w-full">
         {(!currentUser || currentUser.userType !== 'school') && (

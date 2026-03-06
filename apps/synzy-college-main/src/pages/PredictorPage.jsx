@@ -1,78 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { ChevronDown, User, MapPin, Building, Navigation, Heart } from 'lucide-react';
+import React, { useState } from 'react';
+import { Navigation } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { predictcolleges } from '../api/predictorService';
 import CollegeCard from '../components/CollegeCard';
 import { toast } from 'react-toastify';
 
-const collegeTypes = [
-  'Government',
-  'Private',
-  'Convent'
-];
-
-const shiftOptions = [
-  'Morning',
-  'Afternoon',
-  'Night college'
-];
-
-const standardOptions = [
-  'Playcollege',
-  'Pre-Primary',
-  'Primary',
-  'Secondary'
-];
-
-const genderOptions = [
-  'Male', 'Female', 'Co-educational'
-];
-
-const stateOptions = [
-  // States (28)
-  'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
-  'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 
-  'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 
-  'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 
-  'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 
-  'Uttarakhand', 'West Bengal',
-  // Union Territories (8)
-  'Andaman and Nicobar Islands', 'Chandigarh', 'Dadra and Nagar Haveli and Daman and Diu',
-  'Delhi', 'Jammu and Kashmir', 'Ladakh', 'Lakshadweep', 'Puducherry'
-];
-
-const cityOptions = [
-  'Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Chennai', 'Kolkata', 'Pune',
-  'Ahmedabad', 'Jaipur', 'Surat', 'Lucknow', 'Kanpur', 'Nagpur', 'Indore',
-  'Thane', 'Bhopal', 'Visakhapatnam', 'Pimpri-Chinchwad', 'Patna', 'Vadodara'
-];
-
-const areaOptions = [
-  'Central', 'North', 'South', 'East', 'West', 'Downtown', 'Suburbs',
-  'Industrial Area', 'Residential Area', 'Commercial Area'
-];
-
-const interestsOptions = [
-  'Sports', 'Music', 'Dance', 'Art & Craft', 'Science', 'Mathematics', 
-  'Literature', 'Technology', 'Debate', 'Theater', 'Photography', 'Chess',
-  'Focusing on Academics', 'Focuses on Practical Learning', 'Focuses on Theoretical Learning',
-  'Empowering in Sports', 'Empowering in Arts', 'Special Focus on Mathematics',
-  'Special Focus on Science', 'Special Focus on Physical Education',
-  'Leadership Development', 'STEM Activities', 'Cultural Education',
-  'Technology Integration', 'Environmental Awareness'
-];
-
 const PredictorPage = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    collegeType: '',
-    preferredShifts: '',
-    preferredStandard: '',
-    gender: '',
-    state: '',
-    city: '',
-    area: '',
-    interests: ''
+    stream: '',
+    examType: '',
+    examRank: ''
   });
 
   const [errors, setErrors] = useState({});
@@ -86,7 +24,6 @@ const PredictorPage = () => {
       [field]: value
     }));
     
-    // Clear error when user starts typing
     if (errors[field]) {
       setErrors(prev => ({
         ...prev,
@@ -98,97 +35,98 @@ const PredictorPage = () => {
   const validateForm = () => {
     const newErrors = {};
     
-    if (!formData.gender) {
-      newErrors.gender = 'Gender is required';
+    if (!formData.stream) {
+      newErrors.stream = 'Please select your stream';
     }
     
-    if (!formData.state) {
-      newErrors.state = 'State is required';
+    if (!formData.examType) {
+      newErrors.examType = 'Please select exam type';
     }
     
-    if (!formData.city) {
-      newErrors.city = 'City is required';
-    }
-    
-    if (!formData.area) {
-      newErrors.area = 'Area is required';
+    if (!formData.examRank) {
+      newErrors.examRank = 'Please enter your exam rank';
+    } else if (isNaN(formData.examRank) || formData.examRank <= 0) {
+      newErrors.examRank = 'Please enter a valid rank';
     }
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
- const handleGoogleLocation = () => {
-  if (!navigator.geolocation) {
-    toast.error('Geolocation is not supported by this browser.');
-    return;
-  }
+  const handleGoogleLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error('Geolocation is not supported by this browser.');
+      return;
+    }
 
-  setIsLoading(true);
+    setIsLoading(true);
 
-  navigator.geolocation.getCurrentPosition(
-    async (position) => {
-      try {
-        const { latitude, longitude } = position.coords;
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
 
-        const response = await fetch(
-          `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
-        );
+          const response = await fetch(
+            `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
+          );
 
-        const data = await response.json();
+          const data = await response.json();
 
-        if (data.countryName !== 'India') {
-          toast.error('Location service is only available in India.');
+          if (data.countryName !== 'India') {
+            toast.error('Location service is only available in India.');
+            setIsLoading(false);
+            return;
+          }
+
+          toast.success('Location fetched successfully!');
+        } catch (error) {
+          console.error('Error fetching location:', error);
+          toast.error('Failed to fetch location. Please try again.');
+        } finally {
           setIsLoading(false);
-          return;
         }
+      },
+      (error) => {
+        console.error('Geolocation error:', error);
 
-        setFormData((prev) => ({
-          ...prev,
-          latitude: latitude.toFixed(6),
-          longitude: longitude.toFixed(6),
-          state: data.principalSubdivision || '',
-          city: data.city || data.locality || data.localityInfo?.administrative?.[3]?.name || '',
-          area: data.locality || '',
-          pincode: data.postcode || ''
-        }));
+        if (error.code === 1) toast.error('Permission denied for location.');
+        else if (error.code === 2) toast.error('Position unavailable.');
+        else if (error.code === 3) toast.error('Location request timed out.');
+        else toast.error('Unable to access your location.');
 
-        toast.success('Location fetched successfully!');
-      } catch (error) {
-        console.error('Error fetching location:', error);
-        toast.error('Failed to fetch location. Please try again.');
-      } finally {
         setIsLoading(false);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000
       }
-    },
-    (error) => {
-      console.error('Geolocation error:', error);
+    );
+  };
 
-      if (error.code === 1) toast.error('Permission denied for location.');
-      else if (error.code === 2) toast.error('Position unavailable.');
-      else if (error.code === 3) toast.error('Location request timed out.');
-      else toast.error('Unable to access your location.');
+  // Helper function to extract location from college name
+  const extractLocation = (collegeName) => {
+    // Try to extract location after comma
+    const match = collegeName.match(/,\s*(.+)$/);
+    if (match) return match[1];
+    
+    // Try to extract location in parentheses
+    const parenMatch = collegeName.match(/\(([^)]+)\)/);
+    if (parenMatch) return parenMatch[1];
+    
+    return "India";
+  };
 
-      setIsLoading(false);
-    },
-    {
-      enableHighAccuracy: true,
-      timeout: 10000,
-      maximumAge: 300000
-    }
-  );
-};
+  // Helper function to generate a consistent ID
+  const generateId = (name, index) => {
+    return `pred-${Date.now()}-${index}-${name.slice(0, 10).replace(/\s+/g, '-')}`;
+  };
 
-
-  const handleGetcolleges = async (e) => {
-    // Prevent any default form behavior
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
+  const handlePredict = async (e) => {
+    e.preventDefault();
 
     if (!validateForm()) {
-      toast.error('Please fill in all required fields');
+      toast.error('Please fill in all fields');
       return;
     }
 
@@ -196,36 +134,72 @@ const PredictorPage = () => {
     setHasSearched(true);
 
     try {
-      // Map frontend field names to backend field names
       const payload = {
-        collegeMode: formData.collegeType === 'Convent' ? 'convent' :
-                   formData.collegeType === 'Private' ? 'private' :
-                   formData.collegeType === 'Government' ? 'government' : formData.collegeType,
-        genderType: formData.gender === 'Male' ? 'boy' :
-                   formData.gender === 'Female' ? 'girl' :
-                   formData.gender === 'Co-educational' ? 'co-ed' : formData.gender,
-        shifts: formData.preferredShifts === 'Morning' ? 'morning' :
-                formData.preferredShifts === 'Afternoon' ? 'afternoon' :
-                formData.preferredShifts === 'Night college' ? 'night college' : formData.preferredShifts,
-        standard: formData.preferredStandard ? formData.preferredStandard.toLowerCase() : undefined,
-        state: formData.state,
-        city: formData.city,
-        area: formData.area,
-        activities: formData.interests ? [formData.interests] : []
+        stream: formData.stream,
+        examType: formData.examType,
+        examRank: parseInt(formData.examRank)
       };
 
-      console.log('🔍 college Predictor - Searching with payload:', payload);
-      const resp = await predictcolleges(payload);
-      const list = Array.isArray(resp?.data) ? resp.data : Array.isArray(resp) ? resp : [];
-      console.log('✅ college Predictor - Found', list.length, 'colleges');
-      setSearchResults(list);
+      console.log('🔍 Predicting colleges with payload:', payload);
       
-      if (list.length === 0) {
-        toast.info('No colleges found matching your criteria. Try adjusting your preferences.');
+      const resp = await predictcolleges(payload);
+      console.log('✅ Response:', resp);
+      
+      // Get the array of college names from response
+      const collegeNames = resp?.data || [];
+      console.log('✅ Found', collegeNames.length, 'colleges');
+      
+      // Transform string array into college objects that CollegeCard expects
+      const formattedColleges = collegeNames.map((name, index) => ({
+        _id: generateId(name, index),
+        id: generateId(name, index),
+        collegeId: generateId(name, index),
+        name: name,
+        collegeName: name,
+        location: extractLocation(name),
+        city: extractLocation(name),
+        state: extractLocation(name),
+        type: formData.stream,
+        stream: formData.stream,
+        examType: formData.examType,
+        rank: "Top Tier",
+        fee: "Contact college",
+        fees: "Contact college",
+        score: "N/A",
+        rating: "N/A",
+        image: null,
+        images: [],
+        established: "N/A",
+        accreditation: "NAAC A+",
+        affiliatedTo: "Recognized by UGC",
+        website: "#",
+        email: "info@college.edu",
+        phone: "Contact college",
+        description: `${name} is a premier institution for ${formData.stream} education.`,
+        courses: [formData.stream],
+        facilities: ["Library", "Laboratory", "Sports Complex"],
+        placementRate: "90%+",
+        highestPackage: "Contact college",
+        averagePackage: "Contact college"
+      }));
+      
+      console.log('✅ Formatted colleges:', formattedColleges);
+      setSearchResults(formattedColleges);
+      
+      if (formattedColleges.length === 0) {
+        toast.info('No colleges found matching your criteria. Try different preferences.');
       }
     } catch (error) {
       console.error('❌ Prediction error:', error);
-      toast.error('Failed to fetch college predictions. Please try again.');
+      if (error.response) {
+        console.error('Error status:', error.response.status);
+        console.error('Error data:', error.response.data);
+        toast.error(error.response.data?.message || 'Prediction failed');
+      } else if (error.request) {
+        toast.error('No response from server. Please check your connection.');
+      } else {
+        toast.error('Failed to fetch college predictions. Please try again.');
+      }
       setSearchResults([]);
     } finally {
       setIsLoading(false);
@@ -234,80 +208,13 @@ const PredictorPage = () => {
 
   const clearAll = () => {
     setFormData({
-      collegeType: '',
-      preferredShifts: '',
-      preferredStandard: '',
-      gender: '',
-      state: '',
-      city: '',
-      area: '',
-      interests: ''
+      stream: '',
+      examType: '',
+      examRank: ''
     });
     setErrors({});
     setSearchResults([]);
     setHasSearched(false);
-  };
-
-  const DropdownField = ({ label, field, icon, required = false }) => {
-    const options = 
-      field === 'collegeType' ? collegeTypes :
-      field === 'preferredShifts' ? shiftOptions :
-      field === 'preferredStandard' ? standardOptions :
-      field === 'gender' ? genderOptions :
-      field === 'state' ? stateOptions :
-      field === 'city' ? cityOptions :
-      field === 'area' ? areaOptions :
-      field === 'interests' ? interestsOptions : [];
-    
-    const placeholder = 
-      field === 'collegeType' ? 'Select college Type' :
-      field === 'preferredShifts' ? 'Select Shift' :
-      field === 'preferredStandard' ? 'Select Standard' :
-      field === 'gender' ? 'Select' :
-      field === 'state' ? 'Select' :
-      field === 'city' ? 'Select' :
-      field === 'area' ? 'Select' :
-      field === 'interests' ? 'Select Interest' : 'Select';
-
-    const handleSelect = (value) => {
-      handleInputChange(field, value);
-      setOpenDropdown(null);
-    };
-
-    return (
-      <div className="mb-6">
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
-          {required && <span className="text-red-500">*</span>}
-          {label}
-        </label>
-        <div className="relative dropdown-container">
-          {icon && (
-            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none z-10">
-              {icon}
-            </div>
-          )}
-          <select
-            value={formData[field]}
-            onChange={(e) => handleInputChange(field, e.target.value)}
-            className={`w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white text-left appearance-none ${
-              icon ? 'pl-10' : ''
-            } ${errors[field] ? 'border-red-500' : ''} ${!formData[field] ? 'text-gray-400' : 'text-gray-900'}`}
-          >
-            <option value="" className="text-gray-400">{placeholder}</option>
-            {options.map((option) => (
-              <option key={`${field}-${option}`} value={option} className="text-gray-900">
-                {option}
-              </option>
-            ))}
-          </select>
-          <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
-          
-          {errors[field] && (
-            <p className="text-red-500 text-sm mt-1">{errors[field]}</p>
-          )}
-        </div>
-      </div>
-    );
   };
 
   return (
@@ -323,65 +230,101 @@ const PredictorPage = () => {
             </p>
           </div>
 
-          <form onSubmit={handleGetcolleges}>
-            {/* Two Column Layout */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-6">
-              {/* Left Column */}
-              <div className="space-y-6">
-                <DropdownField
-                  label="Select college Type"
-                  field="collegeType"
-                />
-                
-                <DropdownField
-                  label="Preferred Shifts"
-                  field="preferredShifts"
-                />
-                
-                <DropdownField
-                  label="Preferred Standard"
-                  field="preferredStandard"
-                />
-                
-                <DropdownField
-                  label="Gender"
-                  field="gender"
-                  icon={<User className="w-5 h-5" />}
-                  required={true}
-                />
+          <form onSubmit={handlePredict}>
+            {/* Three Fields */}
+            <div className="space-y-6 mb-6">
+              {/* Stream Field */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Select your stream
+                </label>
+                <label className="block text-xs text-gray-500 mb-1">Stream</label>
+                <div className="relative">
+                  <select
+                    value={formData.stream}
+                    onChange={(e) => handleInputChange('stream', e.target.value)}
+                    className={`w-full px-4 py-3 pr-10 border ${
+                      errors.stream ? 'border-red-500' : 'border-gray-300'
+                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white appearance-none`}
+                  >
+                    <option value="">Select Stream</option>
+                    <option value="Engineering">Engineering</option>
+                    <option value="Medical">Medical</option>
+                    <option value="Commerce">Commerce</option>
+                    <option value="Arts">Arts</option>
+                    <option value="Science">Science</option>
+                  </select>
+                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+                {errors.stream && (
+                  <p className="text-red-500 text-sm mt-1">{errors.stream}</p>
+                )}
               </div>
 
-              {/* Right Column */}
-              <div className="space-y-6">
-                <DropdownField
-                  label="State"
-                  field="state"
-                  icon={<MapPin className="w-5 h-5" />}
-                  required={true}
+              {/* Exam Type Field */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Select exam type
+                </label>
+                <label className="block text-xs text-gray-500 mb-1">Exam Type</label>
+                <div className="relative">
+                  <select
+                    value={formData.examType}
+                    onChange={(e) => handleInputChange('examType', e.target.value)}
+                    className={`w-full px-4 py-3 pr-10 border ${
+                      errors.examType ? 'border-red-500' : 'border-gray-300'
+                    } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white appearance-none`}
+                  >
+                    <option value="">Select Exam Type</option>
+                    <option value="JEE Main">JEE Main</option>
+                    <option value="JEE Advanced">JEE Advanced</option>
+                    <option value="BITSAT">BITSAT</option>
+                    <option value="NEET">NEET</option>
+                    <option value="AIIMS">AIIMS</option>
+                    <option value="State CET">State CET</option>
+                    <option value="COMEDK">COMEDK</option>
+                    <option value="WBJEE">WBJEE</option>
+                    <option value="MHT-CET">MHT-CET</option>
+                    <option value="KCET">KCET</option>
+                  </select>
+                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+                {errors.examType && (
+                  <p className="text-red-500 text-sm mt-1">{errors.examType}</p>
+                )}
+              </div>
+
+              {/* Exam Rank Field */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Enter your exam rank
+                </label>
+                <label className="block text-xs text-gray-500 mb-1">Exam Rank</label>
+                <input
+                  type="number"
+                  value={formData.examRank}
+                  onChange={(e) => handleInputChange('examRank', e.target.value)}
+                  placeholder="Enter your rank"
+                  className={`w-full px-4 py-3 border ${
+                    errors.examRank ? 'border-red-500' : 'border-gray-300'
+                  } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                  min="1"
                 />
-                
-                <DropdownField
-                  label="City"
-                  field="city"
-                  icon={<Building className="w-5 h-5" />}
-                  required={true}
-                />
-                
-                <DropdownField
-                  label="Area"
-                  field="area"
-                  icon={<Navigation className="w-5 h-5" />}
-                  required={true}
-                />
-                
-                <DropdownField
-                  label="Interests"
-                  field="interests"
-                  icon={<Heart className="w-5 h-5" />}
-                />
+                {errors.examRank && (
+                  <p className="text-red-500 text-sm mt-1">{errors.examRank}</p>
+                )}
               </div>
             </div>
 
+            {/* Google Location Button */}
             <div className="pt-4">
               <button
                 type="button"
@@ -405,6 +348,7 @@ const PredictorPage = () => {
               </button>
             </div>
 
+            {/* Submit Button */}
             <div className="pt-4 sm:pt-6">
               <button
                 type="submit"
@@ -416,6 +360,7 @@ const PredictorPage = () => {
             </div>
           </form>
 
+          {/* Create Account Link */}
           <div className="mt-4 sm:mt-6 text-center">
             <p className="text-sm sm:text-base text-gray-600">
               Want to save your preferences?{' '}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Routes, Route, Link, useNavigate, Navigate } from "react-router-dom";
-import {  LogOut, FileText, Eye, Star, Check, X, Calendar } from "lucide-react";
+import {  LogOut, FileText, Eye, Star, Check, X, Calendar, ArrowLeft } from "lucide-react";
 import {
   getcollegeById,
   getPendingcolleges,
@@ -40,7 +40,22 @@ const Logo = ({ to = "/", size = "default" }) => {
 const CollegeHeader = ({ collegeName, onLogout, applicationsCount, hasProfile, currentUser }) => (
   <header className="bg-white shadow-md">
     <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
-      <Logo to="/college-portal" size="default" />
+      {/* Back Button - Extreme Left */}
+      <button 
+        onClick={() => navigate(-1)}
+        className="flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors absolute left-6"
+        title="Go back"
+      >
+        <ArrowLeft size={18} />
+        <span className="text-sm font-medium">Back</span>
+      </button>
+
+      {/* Logo - Moved left with ml-4 */}
+      <div className="flex-1 flex justify-center md:justify-start md:ml-4">
+        <Logo to="/college-portal" size="default" />
+      </div>
+      
+      {/* Right Section - Navigation and Actions */}
       <div className="flex items-center space-x-6">
         {currentUser?.userType === 'college' && (
           <Link

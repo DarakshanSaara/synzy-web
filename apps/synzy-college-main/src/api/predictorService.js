@@ -1,10 +1,8 @@
+// In predictorService.js
 import apiClient from './axios';
 
-// Posts user filters and returns matched colleges (public route)
 export const predictcolleges = async (filters) => {
-	// Use the correct backend route: /admin/predict-colleges
-	const { data } = await apiClient.post('/admin/predict-colleges', filters);
-	return data;
+  // Add /colleges/ to the path
+  const { data } = await apiClient.post('/colleges/predict-colleges', filters);
+  return data;
 };
-
-

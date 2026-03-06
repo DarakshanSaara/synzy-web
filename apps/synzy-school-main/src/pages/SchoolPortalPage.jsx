@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Routes, Route, Link, useNavigate, Navigate } from "react-router-dom";
-import { School, LogOut, FileText, Eye, Star, Check, X, Calendar } from "lucide-react";
+import { School, LogOut, FileText, Eye, Star, Check, X, Calendar, ArrowLeft } from "lucide-react";
 import {
   getSchoolById,
   getPendingSchools,
@@ -40,43 +40,58 @@ const Logo = ({ to = "/", size = "default" }) => {
 const SchoolHeader = ({ schoolName, onLogout, applicationsCount, hasProfile, currentUser }) => (
   <header className="bg-white shadow-md">
     <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
-      <Logo to="/school-portal" size="default" />
-      <div className="flex items-center space-x-6">
-        {currentUser?.userType === 'school' && (
-          <Link
-            to="/school-portal/register"
+        {/* Back Button - Extreme Left */}
+        <button 
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors absolute left-6"
+          title="Go back"
+        >
+          <ArrowLeft size={18} />
+          <span className="text-sm font-medium">Back</span>
+        </button>
+
+        {/* Logo - Moved left with ml-4 */}
+        <div className="flex-1 flex justify-center md:justify-start md:ml-4">
+          <Logo to="/school-portal" size="default" />
+        </div>
+        
+        {/* Right Section - Navigation and Actions */}
+        <div className="flex items-center space-x-6">
+          {currentUser?.userType === 'school' && (
+            <Link
+              to="/school-portal/register"
+              className="text-gray-600 hover:text-blue-600 flex items-center"
+            >
+              <FileText size={18} className="mr-2" /> {hasProfile ? 'School Profile' : 'School Registration'}
+            </Link>
+          )}
+          {/* Approval Status removed per request */}
+          {/* <Link
+            to="/school-portal/shortlisted"
             className="text-gray-600 hover:text-blue-600 flex items-center"
           >
-            <FileText size={18} className="mr-2" /> {hasProfile ? 'School Profile' : 'School Registration'}
+            <Star size={18} className="mr-2" /> Shortlisted Applications
+          </Link> */}
+          <Link
+            to="/school-portal/applications"
+            className="text-gray-600 hover:text-blue-600 flex items-center relative"
+          >
+            <Eye size={18} className="mr-2" /> View Student Applications
+            {typeof applicationsCount === 'number' && (
+              <span className="ml-2 inline-flex items-center justify-center h-5 min-w-[20px] px-1.5 text-xs font-semibold rounded-full bg-blue-600 text-white">
+                {applicationsCount}
+              </span>
+            )}
           </Link>
-        )}
-        {/* Approval Status removed per request */}
-        {/* <Link
-          to="/school-portal/shortlisted"
-          className="text-gray-600 hover:text-blue-600 flex items-center"
-        >
-          <Star size={18} className="mr-2" /> Shortlisted Applications
-        </Link> */}
-        <Link
-          to="/school-portal/applications"
-          className="text-gray-600 hover:text-blue-600 flex items-center relative"
-        >
-          <Eye size={18} className="mr-2" /> View Student Applications
-          {typeof applicationsCount === 'number' && (
-            <span className="ml-2 inline-flex items-center justify-center h-5 min-w-[20px] px-1.5 text-xs font-semibold rounded-full bg-blue-600 text-white">
-              {applicationsCount}
-            </span>
-          )}
-        </Link>
-        <span className="text-gray-500">|</span>
-        <button
-          onClick={onLogout}
-          className="text-gray-600 hover:text-blue-600 flex items-center"
-        >
-          <LogOut size={16} className="mr-1" /> Logout
-        </button>
-      </div>
-    </nav>
+          <span className="text-gray-500">|</span>
+          <button
+            onClick={onLogout}
+            className="text-gray-600 hover:text-blue-600 flex items-center"
+          >
+            <LogOut size={16} className="mr-1" /> Logout
+          </button>
+        </div>
+      </nav>
   </header>
 );
 
