@@ -15,7 +15,27 @@ import WrittenExamSchedulingModal from "../components/WrittenExamSchedulingModal
 import { useAuth } from "../context/AuthContext";
 import ErrorBoundary from "../components/ErrorBoundary";
 import { toast } from "react-toastify";
-import Logo from "../components/Logo";
+// import Logo from "../components/Logo";
+import logo from "../assets/logo.png";
+
+// Custom Logo component with image only
+const Logo = ({ to = "/", size = "default" }) => {
+  const sizeClasses = {
+    small: "w-8 h-8",
+    default: "w-30 h-12",
+    large: "w-12 h-12"
+  };
+
+  return (
+    <Link to={to} className="flex items-center">
+      <img 
+        src={logo} 
+        alt="Synzy Logo" 
+        className={`${sizeClasses[size] || sizeClasses.default} object-contain`}
+      />
+    </Link>
+  );
+};
 
 const SchoolHeader = ({ schoolName, onLogout, applicationsCount, hasProfile, currentUser }) => (
   <header className="bg-white shadow-md">

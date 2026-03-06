@@ -241,7 +241,7 @@ const HomePage = ({ onCompareToggle, comparisonList, shortlist, onShortlistToggl
               className="bg-blue-500 text-white font-semibold px-8 py-4 rounded-lg hover:bg-blue-400 shadow-lg text-lg flex items-center gap-2"
             >
               <Filter size={20} />
-              college Predictor
+              College Predictor
             </button>
           </div>
         </div>

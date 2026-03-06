@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { School, Menu, X, LogOut, User, ChevronDown, Shield } from 'lucide-react';
 import NotificationIcon from './NotificationIcon';
-import Logo from './Logo';
+// import Logo from './Logo';
+import logo from '../assets/logo.png';
 
 const Header = ({ isMobileMenuOpen, setMobileMenuOpen, compareCount, shortlistCount = 0, currentUser, onLogout }) => {
   const location = useLocation();
@@ -19,6 +20,14 @@ const Header = ({ isMobileMenuOpen, setMobileMenuOpen, compareCount, shortlistCo
       navigate('/signup-school');
     }
   };
+
+  // Logo component
+  const Logo = () => (
+    <Link to="/" className="flex items-center gap-2">
+      <img src={logo} alt="Synzy Logo" className="w-30 h-12" />
+      {/* <span className="text-xl font-bold text-gray-800">Synzy</span> */}
+    </Link>
+  );
 
   return (
   <header className="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
@@ -38,10 +47,10 @@ const Header = ({ isMobileMenuOpen, setMobileMenuOpen, compareCount, shortlistCo
                   Compare
                   {compareCount > 0 && <span className="absolute -top-2 -right-4 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">{compareCount}</span>}
                 </Link>
-                <Link to="/shortlist" className="text-gray-600 hover:text-blue-600 relative">
+                {/* <Link to="/shortlist" className="text-gray-600 hover:text-blue-600 relative">
                   Shortlist
                   {shortlistCount > 0 && <span className="absolute -top-2 -right-6 bg-rose-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">{shortlistCount}</span>}
-                </Link>
+                </Link> */}
                 <Link to="/blog" className="text-gray-600 hover:text-blue-600">Blog</Link>
             </>
         )}

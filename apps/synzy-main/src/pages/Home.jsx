@@ -21,8 +21,11 @@ import {
   School,
   Library,
   ArrowRightCircle,
-  ArrowLeftCircle
+  ArrowLeftCircle,
+  Instagram,
+  Linkedin
 } from 'lucide-react';
+import logo from '../assets/logo.png';
 
 const SynzyHome = () => {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
@@ -136,28 +139,27 @@ const SynzyHome = () => {
       {/* Fixed Header */}
       <header className="fixed top-0 left-0 right-0 bg-white shadow-md z-50 px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <GraduationCap className="w-8 h-8 text-gray-800" />
-          <span className="text-xl font-bold text-gray-800">Synzy</span>
-        </div>
+    <img src={logo} alt="Synzy Logo" className="w-28 h-12" />
+    {/* Synzy text removed */}
+  </div>
         
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6 text-gray-600">
           <button onClick={() => scrollToSection('ai-technology')} className="hover:text-gray-900">Features</button>
           <button onClick={() => scrollToSection('how-it-works')} className="hover:text-gray-900">How It Works</button>
-          <button onClick={() => scrollToSection('testimonials')} className="hover:text-gray-900">Testimonials</button>
           <a
-  href={import.meta.env.VITE_SCHOOL_PORTAL_URL}
-  className="px-4 py-2 bg-white border-2 border-gray-900 text-gray-600 rounded-lg hover:bg-gray-50 transition font-medium"
->
-  School Portal
-</a>
-<a
-  href={import.meta.env.VITE_COLLEGE_PORTAL_URL}
-  className="px-4 py-2 text-gray-900 rounded-lg hover:bg-yellow-400 transition font-medium"
-  style={{ backgroundColor: '#fae96d' }}
->
-  College Portal
-</a>
+            href={import.meta.env.VITE_SCHOOL_PORTAL_URL}
+            className="px-4 py-2 bg-white border-2 border-gray-900 text-gray-600 rounded-lg hover:bg-gray-50 transition font-medium"
+          >
+            School Portal
+          </a>
+          <a
+            href={import.meta.env.VITE_COLLEGE_PORTAL_URL}
+            className="px-4 py-2 text-gray-900 rounded-lg hover:bg-yellow-400 transition font-medium"
+            style={{ backgroundColor: '#fae96d' }}
+          >
+            College Portal
+          </a>
         </nav>
         
         {/* Mobile Menu Button */}
@@ -188,12 +190,12 @@ const SynzyHome = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-            <button onClick={() => window.location.href = import.meta.env.VITE_SCHOOL_PORTAL_URL} className="px-8 py-3 bg-gray-900 text-gray-900 rounded-lg hover:bg-gray-800 transition font-medium flex items-center justify-center gap-2 text-lg">
+            <a href={import.meta.env.VITE_SCHOOL_PORTAL_URL} className="px-8 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition font-medium flex items-center justify-center gap-2 text-lg">
               Go to School Portal
-            </button>
-            <button onClick={() => window.location.href = import.meta.env.VITE_COLLEGE_PORTAL_URL} className="px-8 py-3 bg-white text-gray-900 border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium flex items-center justify-center gap-2 text-lg">
+            </a>
+            <a href={import.meta.env.VITE_COLLEGE_PORTAL_URL} className="px-8 py-3 bg-white text-gray-900 border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium flex items-center justify-center gap-2 text-lg">
               Go to College Portal
-            </button>
+            </a>
           </div>
 
           {/* Stats */}
@@ -278,11 +280,11 @@ const SynzyHome = () => {
         </section>
 
         {/* Testimonials Section */}
-        <section id="testimonials" className="px-6 py-16 max-w-4xl mx-auto">
+        {/* <section id="testimonials" className="px-6 py-16 max-w-4xl mx-auto">
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-3">Trusted by Educators Nationwide</h2>
           <p className="text-gray-500 text-center mb-12">See what schools and colleges are saying about Synzy</p>
 
-          {/* Testimonial Card */}
+          Testimonial Card
           <div className="bg-white border-2 border-gray-200 rounded-xl p-8 shadow-lg relative">
             <div className="min-h-[200px] flex items-center">
               <div className="text-center md:text-left">
@@ -294,7 +296,7 @@ const SynzyHome = () => {
               </div>
             </div>
             
-            {/* Navigation Pills instead of arrows */}
+            Navigation Pills instead of arrows
             <div className="flex justify-center gap-2 mt-6">
               {testimonials.map((_, idx) => (
                 <button
@@ -302,7 +304,7 @@ const SynzyHome = () => {
                   onClick={() => setCurrentTestimonial(idx)}
                   className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                     currentTestimonial === idx 
-                      ? 'bg-gray-900 text-gray-600' 
+                      ? 'bg-gray-900 text-white' 
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
                 >
@@ -311,7 +313,7 @@ const SynzyHome = () => {
               ))}
             </div>
           </div>
-        </section>
+        </section> */}
 
         {/* CTA Section - Dark */}
         <section className="bg-gray-900 px-6 py-16 text-center">
@@ -320,56 +322,76 @@ const SynzyHome = () => {
             Join thousands of institutions already using Synzy to connect with the right students
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button onClick={() => window.location.href = import.meta.env.VITE_SCHOOL_PORTAL_URL} className="px-8 py-3 bg-white text-gray-900 rounded-lg hover:bg-gray-100 transition font-medium">
+            <a href={import.meta.env.VITE_SCHOOL_PORTAL_URL} className="px-8 py-3 bg-white text-gray-900 rounded-lg hover:bg-gray-100 transition font-medium">
               Go to School Portal
-            </button>
-            <button onClick={() => window.location.href = import.meta.env.VITE_COLLEGE_PORTAL_URL} className="px-8 py-3 border-2 border-white text-gray-900 rounded-lg hover:bg-white/10 transition font-medium">
+            </a>
+            <a href={import.meta.env.VITE_COLLEGE_PORTAL_URL} className="px-8 py-3 border-2 border-white text-white rounded-lg hover:bg-white/10 transition font-medium">
               Go to College Portal
-            </button>
+            </a>
           </div>
         </section>
 
         {/* Footer */}
-        <footer className="bg-white px-6 py-12 border-t border-gray-200">
-          <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
-            {/* Logo and description */}
-            <div className="col-span-1">
-              <div className="flex items-center gap-2 mb-4">
-                <GraduationCap className="w-8 h-8 text-gray-800" />
-                <span className="text-xl font-bold text-gray-800">Synzy</span>
-              </div>
-              <p className="text-gray-500 text-sm leading-relaxed">
-                India's first AI-powered platform for school and college exploration. Making education discovery smarter, faster, and more effective.
-              </p>
-            </div>
+<footer className="bg-white px-6 py-12 border-t border-gray-200">
+  <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
+    {/* Logo and description - Left */}
+    <div className="col-span-1">
+      <div className="flex items-center gap-2 mb-4">
+        <img src={logo} alt="Synzy Logo" className="w-28 h-12" />
+        {/* <span className="text-xl font-bold text-gray-800">Synzy</span> */}
+      </div>
+      <p className="text-gray-500 text-sm leading-relaxed">
+        India's first AI-powered platform for school and college exploration. Making education discovery smarter, faster, and more effective.
+      </p>
+      {/* Social Media Links */}
+      <div className="flex gap-4 mt-4">
+        <a 
+          href="https://www.linkedin.com/company/mycampusinfo/" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="text-gray-400 hover:text-gray-600 transition"
+        >
+          <Linkedin className="w-5 h-5" />
+        </a>
+        <a 
+          href="https://www.instagram.com/synzy_ai/" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="text-gray-400 hover:text-gray-600 transition"
+        >
+          <Instagram className="w-5 h-5" />
+        </a>
+      </div>
+    </div>
 
-            {/* Quick Links */}
-            <div className="col-span-1 md:col-span-2">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                <div>
-                  <h4 className="font-semibold mb-3 text-gray-900">Quick Links</h4>
-                  <ul className="space-y-2 text-sm text-gray-500">
-                    <li><button onClick={() => scrollToSection('ai-technology')} className="hover:text-gray-900">Features</button></li>
-                    <li><button onClick={() => scrollToSection('how-it-works')} className="hover:text-gray-900">How It Works</button></li>
-                    <li><button onClick={() => scrollToSection('testimonials')} className="hover:text-gray-900">Testimonials</button></li>
-                    <li><button onClick={() => scrollToSection('hero')} className="hover:text-gray-900">Get Started</button></li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-3 text-gray-900">Registration</h4>
-                  <ul className="space-y-2 text-sm text-gray-500">
-                    <li><a href="#" className="hover:text-gray-900">School Registration</a></li>
-                    <li><a href="#" className="hover:text-gray-900">College Registration</a></li>
-                  </ul>
-                </div>
-                <div className="col-span-2 md:col-span-1 text-sm text-gray-500 text-right md:text-left">
-                  © 2025 Synzy. All rights reserved.<br />
-                  Empowering education through AI.
-                </div>
-              </div>
-            </div>
-          </div>
-        </footer>
+    {/* Quick Links - Middle */}
+    <div className="col-span-1">
+      <div className="flex flex-col items-center">
+        <h4 className="font-semibold mb-3 text-gray-900">Quick Links</h4>
+        <ul className="space-y-2 text-sm text-gray-500 text-center">
+          <li><button onClick={() => scrollToSection('ai-technology')} className="hover:text-gray-900">Features</button></li>
+          <li><button onClick={() => scrollToSection('how-it-works')} className="hover:text-gray-900">How It Works</button></li>
+        </ul>
+      </div>
+    </div>
+
+    {/* Registration - Right */}
+    <div className="col-span-1">
+      <div className="flex flex-col items-end">
+        <h4 className="font-semibold mb-3 text-gray-900">Registration</h4>
+        <ul className="space-y-2 text-sm text-gray-500 text-right">
+          <li><a href={import.meta.env.VITE_SCHOOL_PORTAL_URL} className="hover:text-gray-900">School Registration</a></li>
+          <li><a href={import.meta.env.VITE_COLLEGE_PORTAL_URL} className="hover:text-gray-900">College Registration</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  {/* Copyright line - moved to bottom single line */}
+  <div className="max-w-6xl mx-auto mt-8 pt-4 border-t border-gray-100 text-center text-sm text-gray-500">
+    © 2025 Synzy. All rights reserved. Empowering education through AI.
+  </div>
+</footer>
       </main>
     </div>
   );

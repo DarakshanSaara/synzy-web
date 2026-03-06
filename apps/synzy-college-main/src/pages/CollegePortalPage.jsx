@@ -15,7 +15,27 @@ import WrittenExamSchedulingModal from "../components/WrittenExamSchedulingModal
 import { useAuth } from "../context/AuthContext";
 import ErrorBoundary from "../components/ErrorBoundary";
 import { toast } from "react-toastify";
-import Logo from "../components/Logo";
+// import Logo from "../components/Logo";
+import logo from "../assets/logo.png";
+
+// Custom Logo component with image only
+const Logo = ({ to = "/", size = "default" }) => {
+  const sizeClasses = {
+    small: "w-8 h-8",
+    default: "w-30 h-12",
+    large: "w-12 h-12"
+  };
+
+  return (
+    <Link to={to} className="flex items-center">
+      <img 
+        src={logo} 
+        alt="Synzy Logo" 
+        className={`${sizeClasses[size] || sizeClasses.default} object-contain`}
+      />
+    </Link>
+  );
+};
 
 const CollegeHeader = ({ collegeName, onLogout, applicationsCount, hasProfile, currentUser }) => (
   <header className="bg-white shadow-md">
@@ -27,7 +47,7 @@ const CollegeHeader = ({ collegeName, onLogout, applicationsCount, hasProfile, c
             to="/college-portal/register"
             className="text-gray-600 hover:text-blue-600 flex items-center"
           >
-            <FileText size={18} className="mr-2" /> {hasProfile ? 'college Profile' : 'college Registration'}
+            <FileText size={18} className="mr-2" /> {hasProfile ? 'College Profile' : 'College Registration'}
           </Link>
         )}
         {/* Approval Status removed per request */}
